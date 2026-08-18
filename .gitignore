@@ -1,0 +1,26 @@
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Prisma generated client
+backend/generated/
+
+# AI/editor generated files
+backend/.agents/
+backend/.claude/
+backend/.windsurf/
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
