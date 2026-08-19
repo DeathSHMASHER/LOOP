@@ -49,7 +49,7 @@ export default function AuthShell({
             </h2>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 shadow-2xl shadow-black/20">
+          <div className="rounded-2xl border border-white/10 bg-white/6 p-5 shadow-2xl shadow-black/20">
             <div className="mb-5 flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-white">

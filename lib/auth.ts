@@ -6,6 +6,29 @@ const googleClientId =
   process.env.GOOGLE_CLIENT_ID ?? process.env.AUTH_GOOGLE_ID;
 const googleClientSecret =
   process.env.GOOGLE_CLIENT_SECRET ?? process.env.AUTH_GOOGLE_SECRET;
+const users = [
+  {
+    id: "1",
+    name: "Admin User",
+    email: "admin@test.com",
+    password: "admin123",
+    role: "ADMIN" as const,
+  },
+  {
+    id: "2",
+    name: "Analyst User",
+    email: "analyst@test.com",
+    password: "analyst123",
+    role: "ANALYST" as const,
+  },
+  {
+    id: "3",
+    name: "Viewer User",
+    email: "viewer@test.com",
+    password: "viewer123",
+    role: "VIEWER" as const,
+  },
+];
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,27 +39,31 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (
-          credentials?.email === "test@example.com" &&
-          credentials?.password === "1234"
-        ) {
-          return {
-            id: "1",
-            name: "Test User",
-            email: "test@example.com",
-          };
+        const user = users.find(
+          (user) =>
+            user.email === credentials?.email &&
+            user.password === credentials?.password
+        );
+
+        if (!user) {
+          return null;
         }
 
-        return null;
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        };
       },
     }),
     ...(googleClientId && googleClientSecret
       ? [
-          GoogleProvider({
-            clientId: googleClientId,
-            clientSecret: googleClientSecret,
-          }),
-        ]
+        GoogleProvider({
+          clientId: googleClientId,
+          clientSecret: googleClientSecret,
+        }),
+      ]
       : []),
   ],
   pages: {
@@ -60,6 +87,20 @@ export const authOptions: NextAuthOptions = {
       }
 
       return `${baseUrl}/dashboard`;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role ?? "VIEWER";
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.role = token.role as "ADMIN" | "ANALYST" | "VIEWER";
+        session.user.id = token.id as string;
+      }
+      return session;
     },
   },
 };
