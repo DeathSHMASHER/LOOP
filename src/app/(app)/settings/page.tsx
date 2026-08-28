@@ -16,7 +16,7 @@ export default function SettingsPage() {
   // Invite Form State
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('password123');
+  const [password, setPassword] = useState('');
   const [role, setRole] = useState<'ADMIN' | 'ANALYST' | 'VIEWER'>('ANALYST');
   const [submitting, setSubmitting] = useState(false);
 

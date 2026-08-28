@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Cpu, Lock, Mail, ArrowRight, ShieldCheck, UserCheck, Eye } from 'lucide-react';
+import { Cpu, Lock, Mail, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,12 +36,6 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fillDemoAccount = (roleEmail: string) => {
-    setEmail(roleEmail);
-    setPassword('password123');
-    setError('');
   };
 
   return (
@@ -79,7 +73,7 @@ export default function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@zidio-loop.com"
+                  placeholder="you@company.com"
                   className="w-full pl-10 pr-4 py-2.5 bg-slate-900/90 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
                 />
               </div>
@@ -109,39 +103,6 @@ export default function LoginPage() {
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
-
-          {/* Quick Demo Pre-fill Credentials section */}
-          <div className="pt-4 border-t border-slate-800/80 space-y-3">
-            <p className="text-center text-xs font-semibold text-slate-400">
-              ⚡ Quick Demo Logins (Click to Auto-fill):
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => fillDemoAccount('admin@zidio-loop.com')}
-                className="px-2 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold hover:bg-indigo-500/20 transition-colors flex flex-col items-center gap-1"
-              >
-                <ShieldCheck className="w-4 h-4 text-indigo-400" />
-                <span>Admin</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => fillDemoAccount('analyst@zidio-loop.com')}
-                className="px-2 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold hover:bg-emerald-500/20 transition-colors flex flex-col items-center gap-1"
-              >
-                <UserCheck className="w-4 h-4 text-emerald-400" />
-                <span>Analyst</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => fillDemoAccount('viewer@zidio-loop.com')}
-                className="px-2 py-2 rounded-xl bg-slate-500/10 border border-slate-500/20 text-slate-300 text-xs font-semibold hover:bg-slate-500/20 transition-colors flex flex-col items-center gap-1"
-              >
-                <Eye className="w-4 h-4 text-slate-400" />
-                <span>Viewer</span>
-              </button>
-            </div>
-          </div>
         </div>
 
         <p className="text-center text-xs text-slate-500">
