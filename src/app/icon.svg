@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#9333ea" />
+    </linearGradient>
+    <linearGradient id="coreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e0e7ff" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer Rounded Container -->
+  <rect x="1" y="1" width="30" height="30" rx="8" fill="url(#bgGrad)" stroke="#818cf8" stroke-width="1.5" />
+  
+  <!-- CPU AI Neural Chip Elements -->
+  <!-- Chip Outer Square -->
+  <rect x="8" y="8" width="16" height="16" rx="4" fill="#0f172a" stroke="#c084fc" stroke-width="1.5" />
+  
+  <!-- Central Glowing Core -->
+  <rect x="12" y="12" width="8" height="8" rx="2" fill="url(#coreGrad)" />
+  
+  <!-- Microchip Pins -->
+  <!-- Top Pins -->
+  <line x1="12" y1="5" x2="12" y2="8" stroke="#e0e7ff" stroke-width="1.5" stroke-linecap="round" />
+  <line x1="20" y1="5" x2="20" y2="8" stroke="#e0e7ff" stroke-width="1.5" stroke-linecap="round" />
+  
+  <!-- Bottom Pins -->
+  <line x1="12" y1="24" x2="12" y2="27" stroke="#e0e7ff" stroke-width="1.5" stroke-linecap="round" />
+  <line x1="20" y1="24" x2="20" y2="27" stroke="#e0e7ff" stroke-width="1.5" stroke-linecap="round" />
+  
+  <!-- Left Pins -->
+  <line x1="5" y1="12" x2="8" y2="12" stroke="#e0e7ff" stroke-width="1.5" stroke-linecap="round" />
+  <line x1="5" y1="20" x2="8" y2="20" stroke="#e0e7ff" stroke-width="1.5" stroke-linecap="round" />
+  
+  <!-- Right Pins -->
+  <line x1="24" y1="12" x2="27" y2="12" stroke="#e0e7ff" stroke-width="1.5" stroke-linecap="round" />
+  <line x1="24" y1="20" x2="27" y2="20" stroke="#e0e7ff" stroke-width="1.5" stroke-linecap="round" />
+</svg>
