@@ -76,8 +76,8 @@ async function main() {
 
   const admin = await prisma.user.create({
     data: {
-      name: 'Acme Admin',
-      email: 'admin@zidio-loop.com',
+      name: 'Shahriyar',
+      email: 'shahriyar@zidio-loop.com',
       passwordHash,
       role: Role.ADMIN,
       workspaceId: workspace.id,
@@ -86,8 +86,8 @@ async function main() {
 
   await prisma.user.create({
     data: {
-      name: 'Sarah Analyst',
-      email: 'analyst@zidio-loop.com',
+      name: 'Harish',
+      email: 'harish@zidio-loop.com',
       passwordHash,
       role: Role.ANALYST,
       workspaceId: workspace.id,
@@ -96,8 +96,8 @@ async function main() {
 
   await prisma.user.create({
     data: {
-      name: 'Dave Viewer',
-      email: 'viewer@zidio-loop.com',
+      name: 'Nandini',
+      email: 'nandini@zidio-loop.com',
       passwordHash,
       role: Role.VIEWER,
       workspaceId: workspace.id,
