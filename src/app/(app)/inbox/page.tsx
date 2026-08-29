@@ -3,11 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import {
   Search,
-  Filter,
   Plus,
   Upload,
   Bot,
-  RefreshCw,
   Tag,
   CheckCircle2,
   AlertCircle,
@@ -71,7 +69,7 @@ export default function InboxPage() {
       setPagination(data.pagination || { page: 1, limit: 10, totalPages: 1, totalCount: 0 });
     } catch (err) {
       console.error('Failed to fetch inbox items:', err);
-    } font: {
+    } finally {
       setLoading(false);
     }
   };
@@ -190,47 +188,66 @@ export default function InboxPage() {
   const getSentimentBadge = (s: string) => {
     switch (s) {
       case 'POS':
-        return <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Positive</span>;
+        return <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Positive</span>;
       case 'NEG':
-        return <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">Negative</span>;
+        return <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">Negative</span>;
       default:
-        return <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-500/10 text-slate-400 border border-slate-500/20">Neutral</span>;
-    }
-  };
-
-  const getStatusBadge = (st: string) => {
-    switch (st) {
-      case 'ACTIONED':
-        return <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-400"><CheckCircle2 className="w-3.5 h-3.5" /> Actioned</span>;
-      case 'REVIEWED':
-        return <span className="flex items-center gap-1 text-[11px] font-bold text-indigo-400"><Clock className="w-3.5 h-3.5" /> Reviewed</span>;
-      default:
-        return <span className="flex items-center gap-1 text-[11px] font-bold text-amber-400"><AlertCircle className="w-3.5 h-3.5" /> New</span>;
+        return <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-slate-500/10 text-slate-400 border border-slate-500/20">Neutral</span>;
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Top Controls Toolbar */}
-      <div className="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
-        {/* Search Bar */}
-        <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search feedback text..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-900/90 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
-          />
+      <div className="glass-panel p-3.5 sm:p-5 rounded-2xl border border-slate-800/90 space-y-3.5">
+        {/* Row 1: Search & Action Buttons */}
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+          {/* Search Bar */}
+          <div className="relative flex-1 max-w-full lg:max-w-md">
+            <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search feedback text, customer, or theme..."
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-900/90 border border-slate-800 rounded-xl text-base sm:text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 lg:flex lg:items-center shrink-0">
+            <button
+              onClick={() => setIsSingleModalOpen(true)}
+              className="px-3.5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-indigo-500/20 active:scale-[0.98]"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Single Entry</span>
+            </button>
+
+            <button
+              onClick={() => setIsCsvModalOpen(true)}
+              className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-1.5 border border-slate-700 active:scale-[0.98]"
+            >
+              <Upload className="w-3.5 h-3.5" />
+              <span>CSV Upload</span>
+            </button>
+
+            <button
+              onClick={() => setIsSimulatedModalOpen(true)}
+              className="px-3.5 py-2.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 text-xs font-bold transition-all flex items-center justify-center gap-1.5 border border-purple-500/30 active:scale-[0.98]"
+            >
+              <Zap className="w-3.5 h-3.5 text-purple-400" />
+              <span>Simulate Pull</span>
+            </button>
+          </div>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+        {/* Row 2: Filters Dropdowns */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 border-t border-slate-800/80">
           <select
             value={channel}
             onChange={(e) => setChannel(e.target.value)}
-            className="px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 focus:outline-none focus:border-indigo-500"
+            className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-base sm:text-xs font-semibold text-slate-300 focus:outline-none focus:border-indigo-500"
           >
             <option value="ALL">All Channels</option>
             <option value="Support Ticket">Support Ticket</option>
@@ -245,7 +262,7 @@ export default function InboxPage() {
           <select
             value={sentiment}
             onChange={(e) => setSentiment(e.target.value)}
-            className="px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 focus:outline-none focus:border-indigo-500"
+            className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-base sm:text-xs font-semibold text-slate-300 focus:outline-none focus:border-indigo-500"
           >
             <option value="ALL">All Sentiments</option>
             <option value="POS">Positive</option>
@@ -256,7 +273,7 @@ export default function InboxPage() {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 focus:outline-none focus:border-indigo-500"
+            className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-base sm:text-xs font-semibold text-slate-300 focus:outline-none focus:border-indigo-500"
           >
             <option value="ALL">All Statuses</option>
             <option value="NEW">New</option>
@@ -264,41 +281,17 @@ export default function InboxPage() {
             <option value="ACTIONED">Actioned</option>
           </select>
         </div>
-
-        {/* Actions (Single Entry, CSV Bulk, Simulate Channel) */}
-        <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-          <button
-            onClick={() => setIsSingleModalOpen(true)}
-            className="px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-indigo-500/20"
-          >
-            <Plus className="w-3.5 h-3.5" /> Single Entry
-          </button>
-
-          <button
-            onClick={() => setIsCsvModalOpen(true)}
-            className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 border border-slate-700"
-          >
-            <Upload className="w-3.5 h-3.5" /> CSV Upload
-          </button>
-
-          <button
-            onClick={() => setIsSimulatedModalOpen(true)}
-            className="px-3 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 text-xs font-bold transition-all flex items-center gap-1.5 border border-purple-500/30"
-          >
-            <Zap className="w-3.5 h-3.5 text-purple-400" /> Simulate Channel
-          </button>
-        </div>
       </div>
 
       {/* Main Feedback Table / Card List */}
-      <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
+      <div className="glass-panel rounded-2xl border border-slate-800/90 overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center space-y-3">
+          <div className="p-8 sm:p-12 text-center space-y-3">
             <Loader2 className="w-8 h-8 text-indigo-500 animate-spin mx-auto" />
             <p className="text-xs font-semibold text-slate-400">Loading feedback items...</p>
           </div>
         ) : items.length === 0 ? (
-          <div className="p-12 text-center space-y-3">
+          <div className="p-8 sm:p-12 text-center space-y-3">
             <Tag className="w-10 h-10 text-slate-600 mx-auto" />
             <p className="text-sm font-bold text-slate-300">No feedback items match your filters</p>
             <p className="text-xs text-slate-500">Try clearing search or ingesting new items.</p>
@@ -308,34 +301,39 @@ export default function InboxPage() {
             {items.map((item) => (
               <div
                 key={item.id}
-                className="p-4 hover:bg-slate-900/60 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
+                className="p-4 sm:p-5 hover:bg-slate-900/60 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4"
               >
                 <div className="space-y-2 flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-bold text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                  {/* Badge Row */}
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                    <span className="text-[10px] sm:text-xs font-bold text-slate-300 bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-800">
                       {item.channel}
                     </span>
                     {getSentimentBadge(item.sentiment)}
                     {item.featureArea && (
-                      <span className="text-[11px] font-semibold text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">
+                      <span className="text-[10px] sm:text-[11px] font-semibold text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded-lg border border-purple-500/20">
                         {item.featureArea}
                       </span>
                     )}
-                    <span className="text-[11px] text-slate-500 font-mono">
+                    <span className="text-[10px] sm:text-[11px] text-slate-500 font-mono">
                       {new Date(item.createdAt).toLocaleDateString()}
                     </span>
                   </div>
 
-                  <p className="text-sm font-medium text-slate-100 leading-relaxed">
+                  {/* Feedback Content Text */}
+                  <p className="text-xs sm:text-sm font-medium text-slate-100 leading-relaxed break-words">
                     "{item.content}"
                   </p>
 
-                  <div className="flex items-center gap-3 text-xs text-slate-400">
-                    <span className="text-[11px] text-slate-500">Customer: <strong className="text-slate-400">{item.customerLabel || 'N/A'}</strong></span>
+                  {/* Customer & Theme Metadata */}
+                  <div className="flex items-center gap-2.5 sm:gap-4 text-xs text-slate-400 flex-wrap">
+                    <span className="text-[10px] sm:text-[11px] text-slate-400">
+                      Customer: <strong className="text-slate-200">{item.customerLabel || 'N/A'}</strong>
+                    </span>
                     {item.themes?.length > 0 && (
                       <div className="flex items-center gap-1">
-                        <Tag className="w-3 h-3 text-indigo-400" />
-                        <span className="text-[11px] font-semibold text-indigo-300">
+                        <Tag className="w-3 h-3 text-indigo-400 shrink-0" />
+                        <span className="text-[10px] sm:text-[11px] font-semibold text-indigo-300 truncate max-w-[200px] sm:max-w-none">
                           {item.themes.map((t: any) => t.theme.name).join(', ')}
                         </span>
                       </div>
@@ -343,13 +341,13 @@ export default function InboxPage() {
                   </div>
                 </div>
 
-                {/* Right Triage & AI Reclassify Actions */}
-                <div className="flex items-center gap-3 shrink-0">
+                {/* Triage & AI Reclassify Actions (Responsive Row on mobile) */}
+                <div className="flex items-center justify-between md:justify-end gap-2.5 shrink-0 pt-2 md:pt-0 border-t border-slate-800/40 md:border-t-0">
                   {/* Inline Status Dropdown */}
                   <select
                     value={item.status}
                     onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                    className="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-xl text-xs font-bold text-slate-200 focus:outline-none focus:border-indigo-500 cursor-pointer"
+                    className="px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-xl text-xs font-bold text-slate-200 focus:outline-none focus:border-indigo-500 cursor-pointer"
                   >
                     <option value="NEW">🔴 NEW</option>
                     <option value="REVIEWED">🟡 REVIEWED</option>
@@ -361,7 +359,8 @@ export default function InboxPage() {
                     onClick={() => handleReclassify(item.id)}
                     disabled={reclassifyingId === item.id}
                     title="Re-classify with AI Engine"
-                    className="p-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 transition-colors disabled:opacity-50"
+                    aria-label="Re-classify with AI"
+                    className="p-2 sm:p-2.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 transition-colors disabled:opacity-50 active:scale-95"
                   >
                     {reclassifyingId === item.id ? (
                       <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
@@ -376,8 +375,8 @@ export default function InboxPage() {
         )}
 
         {/* Server-Side Pagination Footer */}
-        <div className="p-4 bg-slate-900/60 border-t border-slate-800 flex items-center justify-between">
-          <span className="text-xs text-slate-400 font-medium">
+        <div className="p-3.5 sm:p-4 bg-slate-900/60 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <span className="text-[11px] sm:text-xs text-slate-400 font-medium text-center sm:text-left">
             Showing Page <strong className="text-white">{pagination.page}</strong> of <strong className="text-white">{pagination.totalPages}</strong> ({pagination.totalCount} items)
           </span>
 
@@ -385,14 +384,19 @@ export default function InboxPage() {
             <button
               onClick={() => fetchInboxItems(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="p-1.5 rounded-lg bg-slate-800 text-slate-300 disabled:opacity-40 hover:bg-slate-700"
+              aria-label="Previous Page"
+              className="p-2 sm:p-1.5 rounded-lg bg-slate-800 text-slate-300 disabled:opacity-40 hover:bg-slate-700 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
+            <span className="text-xs font-bold text-slate-300 px-2 sm:hidden">
+              {pagination.page} / {pagination.totalPages}
+            </span>
             <button
               onClick={() => fetchInboxItems(pagination.page + 1)}
               disabled={pagination.page >= pagination.totalPages}
-              className="p-1.5 rounded-lg bg-slate-800 text-slate-300 disabled:opacity-40 hover:bg-slate-700"
+              aria-label="Next Page"
+              className="p-2 sm:p-1.5 rounded-lg bg-slate-800 text-slate-300 disabled:opacity-40 hover:bg-slate-700 transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -402,22 +406,25 @@ export default function InboxPage() {
 
       {/* Modal 1: Single Item Creation */}
       {isSingleModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-panel w-full max-w-lg rounded-2xl p-6 border border-slate-800 space-y-4">
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="glass-panel w-full max-w-lg rounded-2xl p-4 sm:p-6 border border-slate-800/90 space-y-4 max-h-[90vh] overflow-y-auto my-auto shadow-2xl">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-base font-bold text-white">Ingest Single Feedback Item</h3>
-              <button onClick={() => setIsSingleModalOpen(false)} className="text-slate-400 hover:text-white">
+              <h3 className="text-sm sm:text-base font-bold text-white">Ingest Single Feedback Item</h3>
+              <button
+                onClick={() => setIsSingleModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleSingleSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Channel Source</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Channel Source</label>
                 <select
                   value={singleChannel}
                   onChange={(e) => setSingleChannel(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white"
+                  className="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-base sm:text-xs text-white"
                 >
                   <option value="Support Ticket">Support Ticket</option>
                   <option value="App Store Review">App Store Review</option>
@@ -428,40 +435,40 @@ export default function InboxPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Customer / Account Label</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Customer / Account Label</label>
                 <input
                   type="text"
                   value={singleCustomer}
                   onChange={(e) => setSingleCustomer(e.target.value)}
                   placeholder="e.g. Enterprise Client Acme"
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white"
+                  className="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-base sm:text-xs text-white placeholder-slate-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Feedback Content *</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Feedback Content *</label>
                 <textarea
                   required
                   rows={4}
                   value={singleContent}
                   onChange={(e) => setSingleContent(e.target.value)}
                   placeholder="Enter verbatim customer feedback text..."
-                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white"
+                  className="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-base sm:text-xs text-white placeholder-slate-500"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsSingleModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-xs font-semibold text-slate-300"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 text-xs font-semibold text-slate-300 hover:bg-slate-700"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 rounded-xl bg-indigo-600 text-xs font-bold text-white hover:bg-indigo-500 flex items-center gap-1.5"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-indigo-600 text-xs font-bold text-white hover:bg-indigo-500 flex items-center justify-center gap-1.5"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Ingest & Classify'}
                 </button>
@@ -473,19 +480,22 @@ export default function InboxPage() {
 
       {/* Modal 2: CSV Bulk Upload */}
       {isCsvModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-panel w-full max-w-lg rounded-2xl p-6 border border-slate-800 space-y-4">
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="glass-panel w-full max-w-lg rounded-2xl p-4 sm:p-6 border border-slate-800/90 space-y-4 max-h-[90vh] overflow-y-auto my-auto shadow-2xl">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
                 <FileSpreadsheet className="w-5 h-5 text-emerald-400" /> Bulk CSV Ingestion
               </h3>
-              <button onClick={() => setIsCsvModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button
+                onClick={() => setIsCsvModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleCsvSubmit} className="space-y-4">
-              <div className="border-2 border-dashed border-slate-800 rounded-xl p-6 text-center space-y-2">
+              <div className="border-2 border-dashed border-slate-800 rounded-xl p-5 sm:p-6 text-center space-y-2">
                 <Upload className="w-8 h-8 text-indigo-400 mx-auto" />
                 <p className="text-xs text-slate-300 font-semibold">Upload CSV File</p>
                 <p className="text-[11px] text-slate-500">Columns supported: content, channel, customer_label</p>
@@ -493,7 +503,7 @@ export default function InboxPage() {
                   type="file"
                   accept=".csv"
                   onChange={(e) => setCsvFile(e.target.files?.[0] || null)}
-                  className="block w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/10 file:text-indigo-400"
+                  className="block w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/10 file:text-indigo-400"
                 />
               </div>
 
@@ -503,18 +513,18 @@ export default function InboxPage() {
                 </div>
               )}
 
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsCsvModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-xs font-semibold text-slate-300"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 text-xs font-semibold text-slate-300 hover:bg-slate-700"
                 >
                   Close
                 </button>
                 <button
                   type="submit"
                   disabled={submitting || !csvFile}
-                  className="px-4 py-2 rounded-xl bg-emerald-600 text-xs font-bold text-white hover:bg-emerald-500 flex items-center gap-1.5 disabled:opacity-40"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-600 text-xs font-bold text-white hover:bg-emerald-500 flex items-center justify-center gap-1.5 disabled:opacity-40"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Start CSV Ingestion'}
                 </button>
@@ -526,13 +536,16 @@ export default function InboxPage() {
 
       {/* Modal 3: Simulated Channel Trigger */}
       {isSimulatedModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-panel w-full max-w-md rounded-2xl p-6 border border-slate-800 space-y-4">
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="glass-panel w-full max-w-md rounded-2xl p-4 sm:p-6 border border-slate-800/90 space-y-4 max-h-[90vh] overflow-y-auto my-auto shadow-2xl">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
                 <Zap className="w-5 h-5 text-purple-400" /> Simulated Integration Pull
               </h3>
-              <button onClick={() => setIsSimulatedModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button
+                onClick={() => setIsSimulatedModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -545,7 +558,7 @@ export default function InboxPage() {
               <button
                 onClick={() => handleTriggerSimulated('Zendesk')}
                 disabled={submitting}
-                className="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-purple-500/50 text-left flex items-center justify-between text-xs font-bold text-white transition-all"
+                className="w-full p-3.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-purple-500/50 text-left flex items-center justify-between text-xs font-bold text-white transition-all active:scale-[0.99]"
               >
                 <span>Sync Zendesk Support Tickets</span>
                 <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">3 Tickets</span>
@@ -554,7 +567,7 @@ export default function InboxPage() {
               <button
                 onClick={() => handleTriggerSimulated('App Store')}
                 disabled={submitting}
-                className="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-purple-500/50 text-left flex items-center justify-between text-xs font-bold text-white transition-all"
+                className="w-full p-3.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-purple-500/50 text-left flex items-center justify-between text-xs font-bold text-white transition-all active:scale-[0.99]"
               >
                 <span>Pull App Store iOS Reviews</span>
                 <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">2 Reviews</span>
@@ -563,7 +576,7 @@ export default function InboxPage() {
               <button
                 onClick={() => handleTriggerSimulated('Twitter')}
                 disabled={submitting}
-                className="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-purple-500/50 text-left flex items-center justify-between text-xs font-bold text-white transition-all"
+                className="w-full p-3.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-purple-500/50 text-left flex items-center justify-between text-xs font-bold text-white transition-all active:scale-[0.99]"
               >
                 <span>Fetch Twitter / X Mentions</span>
                 <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">2 Tweets</span>
