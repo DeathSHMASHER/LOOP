@@ -64,20 +64,26 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!existingUser) {
-          // Auto-provision a workspace and admin user for new Google signup
-          const workspaceName = user.name ? `${user.name.split(' ')[0]}'s Workspace` : 'Personal Workspace';
-          const workspace = await db.workspace.create({
-            data: {
-              name: workspaceName,
-            },
+          // Find the primary organization workspace where all existing feedback and themes live
+          let primaryWorkspace = await db.workspace.findFirst({
+            orderBy: { createdAt: 'asc' },
           });
 
+          if (!primaryWorkspace) {
+            primaryWorkspace = await db.workspace.create({
+              data: {
+                name: 'Acme Corp Intelligence',
+              },
+            });
+          }
+
+          // Any new user logging in automatically joins as a VIEWER (read-only access)
           existingUser = await db.user.create({
             data: {
-              name: user.name || 'User',
+              name: user.name || 'Viewer',
               email,
-              role: 'ADMIN',
-              workspaceId: workspace.id,
+              role: 'VIEWER',
+              workspaceId: primaryWorkspace.id,
               image: user.image || null,
             } as any,
             include: { workspace: true },
