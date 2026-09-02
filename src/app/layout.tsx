@@ -6,9 +6,13 @@ export const metadata: Metadata = {
   title: 'Project LOOP — AI Customer-Feedback Intelligence Platform',
   description: 'Multi-tenant customer feedback intelligence platform powered by AI.',
   icons: {
-    icon: '/favicon.svg',
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
     shortcut: '/favicon.svg',
-    apple: '/favicon.svg',
+    apple: '/apple-touch-icon.png',
   },
 };
 
